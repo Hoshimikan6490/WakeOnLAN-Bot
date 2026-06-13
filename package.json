@@ -1,7 +1,24 @@
 {
-    "dependencies": {
-      "axios": "^0.26.1",
-      "discord.js": "^12.4.1"
-    }
+	"name": "wakeonlan-bot",
+	"version": "1.0.0",
+	"description": "このフォークは、フォーク元のtarun5060氏のコードを参考に、最新のdiscord.js v14への対応やスラッシュコマンド対応を行ったものである。\r 趣味で編集しているので、動作は保証しない。というか、MITライセンスなので…",
+	"homepage": "https://github.com/Hoshimikan6490/WakeOnLAN-Bot#readme",
+	"bugs": {
+		"url": "https://github.com/Hoshimikan6490/WakeOnLAN-Bot/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Hoshimikan6490/WakeOnLAN-Bot.git"
+	},
+	"license": "ISC",
+	"author": "",
+	"type": "commonjs",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"dependencies": {
+		"discord.js": "^14.26.4",
+		"dotenv": "^17.4.2"
+	}
 }
-  
