@@ -43,9 +43,12 @@ client.on('clientReady', () => {
 	const rest = new REST({ version: '10' }).setToken(token);
 	async () => {
 		try {
-			await rest.put(Routes.applicationGuildCommands(usageGuildID), {
-				body: await client.commands,
-			});
+			await rest.put(
+				Routes.applicationGuildCommands(client.user.id, usageGuildID),
+				{
+					body: await client.commands,
+				},
+			);
 			console.log('スラッシュコマンドの再読み込みに成功しました。');
 		} catch (err) {
 			console.log(
