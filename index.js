@@ -73,7 +73,7 @@ client.on('interactionCreate', async (interaction) => {
 			return;
 		}
 
-		if (interaction.isApplicationCommand()) {
+		if (interaction.isCommand()) {
 			const { commandName } = interaction;
 
 			switch (commandName) {
