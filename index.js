@@ -59,7 +59,7 @@ client.on('clientReady', () => {
 
 //////////////////////////////////////////////////////////////
 // Command handling
-Client.on('interactionCreate', async (interaction) => {
+client.on('interactionCreate', async (interaction) => {
 	try {
 		if (
 			!interaction.inGuild() &&
