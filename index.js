@@ -39,7 +39,7 @@ client.commands.push(uptime);
 
 //////////////////////////////////////////////////////////////
 // Online status
-client.on('clientReady', () => {
+client.on('clientReady', async () => {
 	const rest = new REST({ version: '10' }).setToken(token);
 	try {
 		await rest.put(
@@ -115,7 +115,10 @@ client.on('interactionCreate', async (interaction) => {
 					break;
 				}
 				case 'status': {
-					const pingCmd = process.platform === 'win32' ? `ping -n 1 ${ipAddress}` : `ping -c 1 ${ipAddress}`;
+					const pingCmd =
+						process.platform === 'win32'
+							? `ping -n 1 ${ipAddress}`
+							: `ping -c 1 ${ipAddress}`;
 					child_process.exec(pingCmd, async (err, stdout) => {
 						if (err) {
 							await interaction.reply({
@@ -141,7 +144,10 @@ client.on('interactionCreate', async (interaction) => {
 					break;
 				}
 				default:
-					await interaction.reply({ content: 'Unknown command', flags: MessageFlags.Ephemeral });
+					await interaction.reply({
+						content: 'Unknown command',
+						flags: MessageFlags.Ephemeral,
+					});
 			}
 		}
 	} catch (err) {
