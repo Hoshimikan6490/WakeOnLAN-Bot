@@ -117,13 +117,13 @@ Client.on('interactionCreate', async (interaction) => {
 					case 'status': {
 						child_process.exec(
 							`ping ${ipAddress} -c 1`,
-							(err, stdout) => {
+							async (err, stdout) => {
 								if (err) {
 									await interaction.reply({
-                    content: 'PC is offline.',
-                    flags: MessageFlags.Ephemeral,
-                  });
-                  return;
+										content: 'PC is offline.',
+										flags: MessageFlags.Ephemeral,
+									});
+									return;
 								} else {
 									const response = stdout.trim();
 									if (response) {
