@@ -1,5 +1,10 @@
 # WakeOnLAN-Bot
 
+## このforkについて
+このフォークは、フォーク元のtarun5060氏のコードを参考に、最新のdiscord.js v14への対応やスラッシュコマンド対応を行ったものである。
+趣味で編集しているので、動作は保証しない。というか、MITライセンスなので…
+
+## About
 This is a simple Discord bot that can be used to wake up a computer using Wake-On-LAN (WOL). It also includes some additional commands such as ping and uptime, and the ability to evaluate and execute arbitrary code.
 Big thanks to [m4](https://github.com/m4tonoob/) for helping me with the JS part.
 
