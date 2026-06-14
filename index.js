@@ -134,7 +134,8 @@ client.on('interactionCreate', async (interaction) => {
 					child_process.exec(pingCmd, async (err, stdout) => {
 						if (err) {
 							await interaction.editReply({
-								content: 'PC is offline.',
+								content:
+									'PCがオフラインになっているか、IPアドレスの設定が誤っています。',
 							});
 							return;
 						} else {
@@ -145,7 +146,8 @@ client.on('interactionCreate', async (interaction) => {
 								});
 							} else {
 								await interaction.editReply({
-									content: 'No response. PC is offline.',
+									content:
+										'Pingに応答がありません。PCがオフラインになっているか、IPアドレスの設定が誤っています。',
 								});
 							}
 						}
@@ -154,7 +156,7 @@ client.on('interactionCreate', async (interaction) => {
 				}
 				default:
 					await interaction.reply({
-						content: 'Unknown command',
+						content: '不明なコマンドです。',
 						flags: MessageFlags.Ephemeral,
 					});
 			}
