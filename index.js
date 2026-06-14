@@ -82,18 +82,19 @@ client.on('interactionCreate', async (interaction) => {
 
 			switch (commandName) {
 				case 'wake': {
+					await interaction.deferReply({
+						flags: MessageFlags.Ephemeral,
+					});
 					child_process.exec(
 						`wakeonlan -i ${ipAddress} ${macAddress}`,
-						(err, stdout) => {
+						async (err) => {
 							if (err) {
-								interaction.reply({
+								await interaction.editReply({
 									content: '❌ PCの起動中にエラーが発生しました。',
-									flags: MessageFlags.Ephemeral,
 								});
 							} else {
-								interaction.reply({
+								await interaction.editReply({
 									content: '✅ PCの起動コマンドを送信しました。',
-									flags: MessageFlags.Ephemeral,
 								});
 							}
 						},
@@ -123,28 +124,28 @@ client.on('interactionCreate', async (interaction) => {
 					break;
 				}
 				case 'status': {
+					await interaction.deferReply({
+						flags: MessageFlags.Ephemeral,
+					});
 					const pingCmd =
 						process.platform === 'win32'
 							? `ping -n 1 ${ipAddress}`
 							: `ping -c 1 ${ipAddress}`;
 					child_process.exec(pingCmd, async (err, stdout) => {
 						if (err) {
-							await interaction.reply({
+							await interaction.editReply({
 								content: 'PC is offline.',
-								flags: MessageFlags.Ephemeral,
 							});
 							return;
 						} else {
 							const response = stdout.trim();
 							if (response) {
-								await interaction.reply({
+								await interaction.editReply({
 									content: response,
-									flags: MessageFlags.Ephemeral,
 								});
 							} else {
-								await interaction.reply({
+								await interaction.editReply({
 									content: 'No response. PC is offline.',
-									flags: MessageFlags.Ephemeral,
 								});
 							}
 						}
