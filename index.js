@@ -98,10 +98,12 @@ client.on('interactionCreate', async (interaction) => {
 				}
 				case 'ping': {
 					const latency = Date.now() - interaction.createdTimestamp;
+					const APILatency =
+						Math.round(client.ws.ping) === -1
+							? 'N/A'
+							: Math.round(client.ws.ping);
 					await interaction.reply({
-						content: `🏓 Latency is \`${latency}ms\`. \nAPI Latency is \`${Math.round(
-							client.ws.ping,
-						)}ms\`.`,
+						content: `🏓 Latency is \`${latency}ms\`. \nAPI Latency is \`${APILatency}ms\`.`,
 						flags: MessageFlags.Ephemeral,
 					});
 					break;
