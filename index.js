@@ -33,9 +33,13 @@ const ping = new SlashCommandBuilder()
 const uptime = new SlashCommandBuilder()
 	.setName('uptime')
 	.setDescription('Botの稼働時間を表示します。');
+const status = new SlashCommandBuilder()
+	.setName('status')
+	.setDescription('PCのオンライン状態を確認します。');
 client.commands.push(wake);
 client.commands.push(ping);
 client.commands.push(uptime);
+client.commands.push(status);
 
 //////////////////////////////////////////////////////////////
 // Online status
@@ -108,10 +112,10 @@ client.on('interactionCreate', async (interaction) => {
 					});
 					break;
 				}
-        case 'uptime': {
-          const days = Math.round(client.uptime / 1000 / 3600 / 24);
-          const hours = Math.round(client.uptime / 1000 / 3600);
-          const minutes = Math.round(client.uptime / 1000 / 60);
+				case 'uptime': {
+					const days = Math.round(client.uptime / 1000 / 3600 / 24);
+					const hours = Math.round(client.uptime / 1000 / 3600);
+					const minutes = Math.round(client.uptime / 1000 / 60);
 					await interaction.reply({
 						content: `起動から \`${days}\` 日 \`${hours % 24}\` 時間 \`${minutes % 60}\` 分経過しています。`,
 						flags: MessageFlags.Ephemeral,
