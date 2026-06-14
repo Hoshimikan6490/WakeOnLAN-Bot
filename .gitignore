@@ -1,2 +1,6 @@
+// Ignore node_modules
 node_modules
-.env
+
+// Ignore environment variables without examples
+.env.*
+!.env.example
