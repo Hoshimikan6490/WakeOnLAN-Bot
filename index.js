@@ -108,10 +108,12 @@ client.on('interactionCreate', async (interaction) => {
 					});
 					break;
 				}
-				case 'uptime': {
-					const hours = Math.round(client.uptime / 1000 / 3600);
+        case 'uptime': {
+          const days = Math.round(client.uptime / 1000 / 3600 / 24);
+          const hours = Math.round(client.uptime / 1000 / 3600);
+          const minutes = Math.round(client.uptime / 1000 / 60);
 					await interaction.reply({
-						content: `Uptime is \`${hours}\` hours.`,
+						content: `起動から \`${days}\` 日 \`${hours % 24}\` 時間 \`${minutes % 60}\` 分経過しています。`,
 						flags: MessageFlags.Ephemeral,
 					});
 					break;
