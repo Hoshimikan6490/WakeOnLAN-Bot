@@ -86,7 +86,7 @@ client.on('interactionCreate', async (interaction) => {
 						flags: MessageFlags.Ephemeral,
 					});
 					child_process.exec(
-						`wakeonlan -i ${ipAddress} ${macAddress}`,
+						`wakeonlan ${macAddress}`,
 						async (err) => {
 							if (err) {
 								await interaction.editReply({
