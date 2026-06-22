@@ -19,6 +19,7 @@ const token = process.env.token;
 const ownerID = process.env.ownerID;
 const usageGuildID = process.env.usageGuildID;
 const ipAddress = process.env.ipAddress;
+const broadcastAddress = process.env.broadcastAddress;
 const macAddress = process.env.macAddress;
 
 //////////////////////////////////////////////////////////////
@@ -86,7 +87,7 @@ client.on('interactionCreate', async (interaction) => {
 						flags: MessageFlags.Ephemeral,
 					});
 					child_process.exec(
-						`wakeonlan -i ${ipAddress} ${macAddress}`,
+						`wakeonlan -i ${broadcastAddress} ${macAddress}`,
 						async (err) => {
 							if (err) {
 								await interaction.editReply({
