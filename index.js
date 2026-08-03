@@ -1,6 +1,7 @@
 const {
 	Client,
 	GatewayIntentBits,
+	ActivityType,
 	SlashCommandBuilder,
 	REST,
 	Routes,
@@ -58,6 +59,32 @@ client.on('clientReady', async () => {
 	}
 
 	console.log(`Logged in as ${client.user.tag} on ${Date()}!`);
+
+	setInterval(() => {
+		// pingの結果を取得して、Botのステータスを更新する
+		const pingCmd =
+			process.platform === 'win32'
+				? `ping -n 1 ${ipAddress}`
+				: `ping -c 1 ${ipAddress}`;
+		child_process.exec(pingCmd, async (err, stdout) => {
+			if (!err && stdout) {
+				const response = stdout.trim();
+				if (response) {
+					client.user.setActivity(`pingに成功しました。`, {
+						type: ActivityType.Playing,
+					});
+				}
+			} else {
+				// pingに失敗した場合は、Botのステータスを「オフライン」に設定する
+				client.user.setActivity(
+					`Pingに応答がありません。PCがオフラインになっているか、IPアドレスの設定が誤っています。`,
+					{
+						type: ActivityType.Watching,
+					},
+				);
+			}
+		});
+	}, 30000);
 });
 
 //////////////////////////////////////////////////////////////
