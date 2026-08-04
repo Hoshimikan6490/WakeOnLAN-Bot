@@ -1,6 +1,7 @@
 const {
 	Client,
 	GatewayIntentBits,
+	PresenceUpdateStatus,
 	ActivityType,
 	SlashCommandBuilder,
 	REST,
@@ -70,12 +71,14 @@ client.on('clientReady', async () => {
 			if (!err && stdout) {
 				const response = stdout.trim();
 				if (response) {
+					client.user.setStatus(PresenceUpdateStatus.Online);
 					client.user.setActivity(`pingに成功しました。`, {
 						type: ActivityType.Playing,
 					});
 				}
 			} else {
 				// pingに失敗した場合は、Botのステータスを「オフライン」に設定する
+				client.user.setStatus(PresenceUpdateStatus.DoNotDisturb);
 				client.user.setActivity(
 					`Pingに応答がありません。PCがオフラインになっているか、IPアドレスの設定が誤っています。`,
 					{
