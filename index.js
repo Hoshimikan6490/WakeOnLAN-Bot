@@ -115,20 +115,35 @@ client.on('interactionCreate', async (interaction) => {
 					await interaction.deferReply({
 						flags: MessageFlags.Ephemeral,
 					});
-					child_process.exec(
+					let content = '';
+					await child_process.exec(
 						`wakeonlan -i ${ipAddress} ${macAddress}`,
 						async (err) => {
 							if (err) {
 								await interaction.editReply({
-									content: '❌ PCの起動中にエラーが発生しました。',
-								});
-							} else {
-								await interaction.editReply({
-									content: '✅ PCの起動コマンドを送信しました。',
+									content: '❌ UnicastでのPCの起動中にエラーが発生しました。',
 								});
 							}
+
+							content += '✅ UnicastアドレスでPCの起動を試みました。';
 						},
 					);
+					const broadcastIPaddress =
+						ipAddress.split('.').slice(0, 3).join('.') + '.255';
+					await child_process.exec(
+						`wakeonlan -i ${broadcastIPaddress} ${macAddress}`,
+						async (err) => {
+							if (err) {
+								await interaction.editReply({
+									content: '❌ BroadcastでのPCの起動中にエラーが発生しました。',
+								});
+							}
+							content += '\n✅ BroadcastアドレスでPCの起動を試みました。';
+						},
+					);
+					await interaction.editReply({
+						content: content,
+					});
 					break;
 				}
 				case 'ping': {
