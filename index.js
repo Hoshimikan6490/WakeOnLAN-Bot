@@ -123,11 +123,12 @@ client.on('interactionCreate', async (interaction) => {
 		if (interaction.isCommand()) {
 			const { commandName } = interaction;
 
+				await interaction.deferReply({
+					flags: MessageFlags.Ephemeral,
+				});
+
 			switch (commandName) {
 				case 'wake': {
-					await interaction.deferReply({
-						flags: MessageFlags.Ephemeral,
-					});
 					try {
 						const { stdout, stderr } = await execAsync(
 							`wakeonlan -i ${ipAddress} ${macAddress}`,
@@ -166,9 +167,8 @@ client.on('interactionCreate', async (interaction) => {
 						Math.round(client.ws.ping) === -1
 							? 'N/A'
 							: Math.round(client.ws.ping);
-					await interaction.reply({
+					await interaction.editReply({
 						content: `🏓 Latency is \`${latency}ms\`. \nAPI Latency is \`${APILatency}ms\`.`,
-						flags: MessageFlags.Ephemeral,
 					});
 					break;
 				}
@@ -176,16 +176,12 @@ client.on('interactionCreate', async (interaction) => {
 					const days = Math.round(client.uptime / 1000 / 3600 / 24);
 					const hours = Math.round(client.uptime / 1000 / 3600);
 					const minutes = Math.round(client.uptime / 1000 / 60);
-					await interaction.reply({
+					await interaction.editReply({
 						content: `起動から \`${days}\` 日 \`${hours % 24}\` 時間 \`${minutes % 60}\` 分経過しています。`,
-						flags: MessageFlags.Ephemeral,
 					});
 					break;
 				}
 				case 'status': {
-					await interaction.deferReply({
-						flags: MessageFlags.Ephemeral,
-					});
 					const pingCmd =
 						process.platform === 'win32'
 							? `ping -n 1 ${ipAddress}`
@@ -214,9 +210,8 @@ client.on('interactionCreate', async (interaction) => {
 					break;
 				}
 				default:
-					await interaction.reply({
+					await interaction.editReply({
 						content: '不明なコマンドです。',
-						flags: MessageFlags.Ephemeral,
 					});
 			}
 		}
