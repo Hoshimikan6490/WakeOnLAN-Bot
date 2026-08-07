@@ -1,4 +1,4 @@
-const {
+import {
 	Client,
 	GatewayIntentBits,
 	PresenceUpdateStatus,
@@ -7,9 +7,12 @@ const {
 	REST,
 	Routes,
 	MessageFlags,
-} = require('discord.js');
-const child_process = require('child_process');
-require('dotenv').config({ quiet: true });
+} from 'discord.js';
+import { promisify } from 'node:util';
+import { exec } from 'node:child_process';
+const execAsync = promisify(exec);
+import dotenv from 'dotenv';
+dotenv.config({ quiet: true });
 
 const client = new Client({
 	intents: [GatewayIntentBits.Guilds],
@@ -61,14 +64,15 @@ client.on('clientReady', async () => {
 
 	console.log(`Logged in as ${client.user.tag} on ${Date()}!`);
 
-	setInterval(() => {
+	setInterval(async () => {
 		// pingの結果を取得して、Botのステータスを更新する
 		const pingCmd =
 			process.platform === 'win32'
 				? `ping -n 1 ${ipAddress}`
 				: `ping -c 1 ${ipAddress}`;
-		child_process.exec(pingCmd, async (err, stdout) => {
-			if (!err && stdout) {
+		try {
+			const { stdout, stderr } = await execAsync(pingCmd);
+			if (!stderr && stdout) {
 				const response = stdout.trim();
 				if (response) {
 					client.user.setStatus(PresenceUpdateStatus.Online);
@@ -86,7 +90,16 @@ client.on('clientReady', async () => {
 					},
 				);
 			}
-		});
+		} catch (err) {
+			// pingに失敗した場合は、Botのステータスを「オフライン」に設定する
+			client.user.setStatus(PresenceUpdateStatus.DoNotDisturb);
+			client.user.setActivity(
+				`Pingに応答がありません。PCがオフラインになっているか、IPアドレスの設定が誤っています。`,
+				{
+					type: ActivityType.Watching,
+				},
+			);
+		}
 	}, 30000);
 });
 
@@ -115,35 +128,36 @@ client.on('interactionCreate', async (interaction) => {
 					await interaction.deferReply({
 						flags: MessageFlags.Ephemeral,
 					});
-					let content = '';
-					await child_process.exec(
-						`wakeonlan -i ${ipAddress} ${macAddress}`,
-						async (err) => {
-							if (err) {
-								await interaction.editReply({
-									content: '❌ UnicastでのPCの起動中にエラーが発生しました。',
-								});
-							}
+					try {
+						const { stdout, stderr } = await execAsync(
+							`wakeonlan -i ${ipAddress} ${macAddress}`,
+						);
+						if (stderr) {
+							await interaction.editReply({
+								content: '❌ UnicastでのPCの起動中にエラーが発生しました。',
+							});
+						}
 
-							content += '✅ UnicastアドレスでPCの起動を試みました。';
-						},
-					);
-					const broadcastIPaddress =
-						ipAddress.split('.').slice(0, 3).join('.') + '.255';
-					await child_process.exec(
-						`wakeonlan -i ${broadcastIPaddress} ${macAddress}`,
-						async (err) => {
-							if (err) {
-								await interaction.editReply({
-									content: '❌ BroadcastでのPCの起動中にエラーが発生しました。',
-								});
-							}
-							content += '\n✅ BroadcastアドレスでPCの起動を試みました。';
-						},
-					);
-					await interaction.editReply({
-						content: content,
-					});
+						const broadcastIPaddress =
+							ipAddress.split('.').slice(0, 3).join('.') + '.255';
+						const { stdout: broadcastStdout, stderr: broadcastStderr } =
+							await execAsync(
+								`wakeonlan -i ${broadcastIPaddress} ${macAddress}`,
+							);
+						if (broadcastStderr) {
+							await interaction.editReply({
+								content: '❌ BroadcastでのPCの起動中にエラーが発生しました。',
+							});
+						}
+
+						await interaction.editReply({
+							content: '✅ PCの起動コマンドを送信しました。',
+						});
+					} catch (err) {
+						await interaction.editReply({
+							content: '❌ PCの起動中に何らかのエラーが発生しました。',
+						});
+					}
 					break;
 				}
 				case 'ping': {
@@ -176,27 +190,27 @@ client.on('interactionCreate', async (interaction) => {
 						process.platform === 'win32'
 							? `ping -n 1 ${ipAddress}`
 							: `ping -c 1 ${ipAddress}`;
-					child_process.exec(pingCmd, async (err, stdout) => {
-						if (err) {
-							await interaction.editReply({
-								content:
-									'PCがオフラインになっているか、IPアドレスの設定が誤っています。',
-							});
-							return;
-						} else {
+					try {
+						const { stdout, stderr } = await execAsync(pingCmd);
+						if (!stderr && stdout) {
 							const response = stdout.trim();
 							if (response) {
 								await interaction.editReply({
 									content: response,
 								});
-							} else {
-								await interaction.editReply({
-									content:
-										'Pingに応答がありません。PCがオフラインになっているか、IPアドレスの設定が誤っています。',
-								});
 							}
+						} else {
+							await interaction.editReply({
+								content:
+									'PCがオフラインになっているか、IPアドレスの設定が誤っています。',
+							});
 						}
-					});
+					} catch (err) {
+						await interaction.editReply({
+							content:
+								'Pingに応答がありません。PCがオフラインになっているか、IPアドレスの設定が誤っています。',
+						});
+					}
 					break;
 				}
 				default:
