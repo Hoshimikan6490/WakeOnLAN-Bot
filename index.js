@@ -221,7 +221,8 @@ client.on('interactionCreate', async (interaction) => {
 			}
 		}
 	} catch (err) {
-		console.error(`Error handling command: ${err}`);
+		console.error(`Error handling command:\n`);
+		console.error(err);
 	}
 });
 
